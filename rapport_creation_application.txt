@@ -1,0 +1,401 @@
+RAPPORT DE CRÉATION DE L'APPLICATION "Calcul Scientifique PRO"
+
+1. INTRODUCTION
+
+Cette application est une plateforme modulaire de calcul scientifique développée avec Streamlit. Son objectif est de proposer un environnement simple, visuel et interactif pour des simulations, des calculs numériques et des démonstrations théoriques en sciences et en ingénierie.
+
+Ce document expose la conception globale, l’organisation du code, le rôle de chaque fichier, la pensée derrière les choix techniques, ainsi que les caractéristiques principales de l’application.
+
+2. OBJECTIF GÉNÉRAL
+
+L’application a été pensée pour servir plusieurs usages :
+- support pédagogique pour des étudiants en physique, mathématiques, automatique et traitement du signal
+- outil d’exploration pour un ingénieur souhaitant tester rapidement des méthodes numériques
+- démonstrateur pour des concepts scientifiques complexes via des visualisations interactives
+- référence modulaire permettant d’ajouter de nouvelles pages sans casser l’architecture existante
+
+3. ARCHITECTURE GLOBALE
+
+L’architecture est organisée autour d’un fichier principal : main.py. Ce fichier gère le démarrage de l’application, le menu latéral, la navigation, la gestion de l’état et les imports des modules.
+Chaque module métier est encapsulé dans un fichier Python autonome. Ce principe sépare la logique métier de l’interface, facilite la maintenance et rend l’application évolutive.
+
+Le modèle retenu est :
+- main.py : point d’entrée, navigation, style
+- fichier de module par domaine scientifique : logique + page Streamlit
+- main.css : style visuel global
+- README.md : documentation d’installation et présentation
+- streamlit_app.py : fichier supprimé, plus utilisé dans la version actuelle
+
+3.1 DEPENDANCES ET LIBRAIRIES
+
+L’application s’appuie sur les librairies suivantes :
+- Streamlit : framework web pour construire l’interface interactive et gérer l’état. C’est le socle de l’application.
+- NumPy : calculs numériques rapides, tableaux, opérateurs vectoriels et fonctions mathématiques.
+- SciPy : méthodes scientifiques avancées comme interpolation, optimisation, intégration, ODE, signaux.
+- Pandas : manipulation de données, tableaux, export CSV et présentation de résultats.
+- Plotly : visualisations interactives et graphiques modernes dans le navigateur.
+- scikit-learn : outils de machine learning et prétraitement dans le module data science.
+- Openpyxl / Matplotlib : disponibles via requirements pour étendre l’usage, même si l’UI principale repose sur Plotly.
+
+Chaque module utilise une combinaison calcul / visualisation adaptée à son objectif : NumPy et SciPy pour le fond mathématique, Pandas pour les tableaux de résultats, Plotly pour les graphiques, et Streamlit pour l’interface.
+
+4. DÉTAIL PAR FICHIER
+
+4.1 main.py
+
+Rôle : fichier d’entrée principal de l’application.
+
+Principales responsabilités :
+- initialisation de Streamlit et configuration de la page
+- gestion des imports des modules métiers
+- construction du menu de navigation dans la sidebar
+- définition des routes entre les noms de pages et les fonctions correspondantes
+- gestion des erreurs d’import pour éviter le plantage complet
+- injection du CSS personnalisé
+- gestion de l’état via st.session_state
+
+Pourquoi ce choix ?
+main.py joue le rôle du contrôleur. Il organise l’ensemble du projet et garantit que chaque page reste isolée. Le menu est construit pour être lisible et intuitif, tandis que la détection d’erreur d’import permet de maintenir l’application même si un module est temporairement défaillant.
+
+4.2 gaussian.py
+
+Rôle : module de génération et d’analyse de distributions gaussiennes.
+
+Contenu :
+- classes mathématiques et moteur complet de distribution gaussienne
+- calcul et visualisation de courbes 1D et 2D
+- formules scientifiques explicitant les propriétés gaussiennes
+- applications concrètes : optique, statistiques, imagerie, finance
+
+Pourquoi ce module ?
+La gaussienne est un concept central en mathématiques et en statistiques. Ce module montre comment une même famille de fonctions intervient dans des domaines variés. Il permet à l’utilisateur de comparer immédiatement les effets d’une amplitude, d’un écart-type ou d’un décalage.
+
+Bibliothèques utilisées :
+- NumPy : pour calculer la fonction gaussienne, normaliser et générer les grilles 1D/2D.
+- Plotly : pour tracer des courbes et des surfaces interactives.
+- Streamlit : pour présenter des sliders et des explications textuelles.
+
+4.3 laser_simulation.py
+
+Rôle : simulation laser et dynamique des populations atomiques.
+
+Contenu :
+- constantes physiques fondamentales
+- moteur de simulation laser sur plusieurs niveaux
+- calcul de l’intensité, de la demi-vie, des équations de taux
+- visualisation temporelle et spectrale
+- section théorie et références optiques
+
+Pourquoi ce module ?
+Le laser est un système physique riche qui combine optique, dynamique et pertes. Ce module aide à comprendre comment la population de niveaux, le gain et les pertes interagissent dans une cavité. La simulation relie des formules abstraites à des courbes concrètes.
+
+Bibliothèques utilisées :
+- NumPy : pour les calculs temporels et les exponentielles.
+- Plotly : pour représenter l’intensité et les spectres.
+- Streamlit : pour configurer les paramètres et afficher les formules.
+
+4.4 cavity_losses.py
+
+Rôle : analyse des pertes optiques dans une cavité laser.
+
+Contenu :
+- modèle des pertes de propagation et pertes miroir
+- calcul de transmittance, absorbance et distances caractéristiques
+- bilans de puissance et seuil laser
+- comparaison de matériaux optiques
+
+Pourquoi ce module ?
+Il permet de comprendre le comportement d’une cavité laser à travers des paramètres physiques concrets. En présentant des matériaux optiques prédéfinis et des formules de pertes, l’utilisateur peut simuler différentes conditions et voir l’impact sur le seuil laser.
+
+Bibliothèques utilisées :
+- NumPy : pour les calculs exponentiels et les transformations.
+- Plotly : pour visualiser les courbes d’intensité.
+- Pandas : pour organiser les données des matériaux.
+
+4.5 navier_stokes.py
+
+Rôle : simulation 2D d’écoulements incompressibles et démonstration Navier-Stokes.
+
+Contenu :
+- moteur CFD simplifié avec schéma de projection
+- calcul du champ de vitesse, pression et vorticité
+- profils analytiques classiques : Poiseuille, Couette, vortex
+- diagnostics de stabilité CFL et régimes d’écoulement
+- section théorie présentant les équations principales
+
+Pourquoi ce module ?
+Navier-Stokes illustre un concept fondamental de mécanique des fluides. Ce fichier est conçu pour transformer une équation complexe en expérience interactive : l’utilisateur modifie la viscosité, l’obstacle et le maillage, puis observe les résultats.
+
+Bibliothèques utilisées :
+- NumPy : pour les calculs de dérivées, la résolution de champ et les opérations matricielles.
+- Plotly : pour les heatmaps et les contours visuels.
+- Streamlit : pour gérer les sliders, afficher les métriques et fournir des retours instantanés.
+
+4.6 integration.py
+
+Rôle : calcul d’intégrales numériques et comparatif de méthodes.
+
+Contenu :
+- implémentation de trapèze, Simpson, Gauss-Legendre, Monte Carlo, Romberg
+- comparaison d’erreurs et visualisations de convergence
+- formules théoriques soulignant l’ordre et la précision
+- outils de diagnostic des méthodes numériques
+
+Pourquoi ce module ?
+Il expose l’utilisateur au choix d’une méthode d’intégration en fonction de la fonction cible et de la précision désirée. Ce module est utile pour comprendre les compromis entre rapidité et précision.
+
+Bibliothèques utilisées :
+- NumPy : pour générer les points d’évaluation et calculer les sommes.
+- SciPy : pour les intégrations plus avancées et les méthodes adaptatives.
+- Plotly : pour comparer les résultats graphiquement.
+- Pandas : pour présenter des tableaux de comparaison.
+
+4.7 interpolation.py
+
+Rôle : interpolation et approximation de données.
+
+Contenu :
+- interpolations linéaire, spline, Lagrange, Chebyshev, RBF, B-spline
+- benchmark des méthodes et mesure d’erreurs (RMSE, MAE, R²)
+- comparaison visuelle et détection de phénomènes comme Runge
+- formulaire théorique expliquant chaque méthode
+
+Pourquoi ce module ?
+Il sert à choisir la bonne méthode d’approximation selon la nature des données. La page montre pourquoi certaines méthodes oscillent alors que d’autres restent stables, et explique le phénomène de Runge.
+
+Bibliothèques utilisées :
+- NumPy : pour la gestion des données et la création de grilles.
+- SciPy : pour les interpolateurs et la régression.
+- Plotly : pour tracer les courbes et les résidus.
+- Pandas : pour exporter les résultats.
+
+4.8 equ_diff.py
+
+Rôle : résolution et visualisation d’équations différentielles.
+
+Contenu :
+- EDO classiques : décroissance, oscillateurs, systèmes chaotiques
+- méthodes numériques : Euler, RK4, RK45, LSODA
+- comparaison des résultats et des erreurs numériques
+- application à des systèmes dynamiques tels que Lorenz ou SIR
+
+Pourquoi ce module ?
+La résolution d’EDO est un pilier du calcul scientifique. Ce module montre comment la stabilité et le choix de la méthode influencent le résultat, et pourquoi des schémas plus évolués sont nécessaires pour des systèmes plus difficiles.
+
+Bibliothèques utilisées :
+- NumPy : pour les vecteurs de temps et la résolution.
+- SciPy : pour résoudre proprement les équations différentielles.
+- Plotly : pour afficher les trajectoires et comparer les solutions.
+
+4.9 optimisation.py
+
+Rôle : optimisation numérique de fonctions et recherche de minimum.
+
+Contenu :
+- algorithmes de recherche de minimum
+- visualisation de fonctions de deux variables
+- comparaison entre méthodes directes et algorithmes itératifs
+- présentation d’exemples standards comme Rosenbrock
+
+Pourquoi ce module ?
+L’optimisation est omniprésente en ingénierie. Cet outil permet de comprendre la notion de minimum, de voir l’impact d’une surface de coût et de comparer des méthodes d’optimisation.
+
+Bibliothèques utilisées :
+- NumPy : pour construire les surfaces de fonction.
+- SciPy : pour les algorithmes d’optimisation.
+- Plotly : pour les visualisations de courbes et de surfaces.
+
+4.10 signal_tools.py
+
+Rôle : traitement du signal et analyse spectrale.
+
+Contenu :
+- définition de signaux élémentaires : sinus, carré, chirp, bruit
+- transformées de Fourier, filtrage, densité spectrale
+- visualisation temporelle et fréquentielle
+- formules clefs du traitement du signal
+
+Pourquoi ce module ?
+Le traitement du signal est complexe à comprendre sans visualisation. Ce module rend visible la transformation d’un signal du domaine temporel au domaine fréquentiel, et explique les notions de filtrage et de densité spectrale.
+
+Bibliothèques utilisées :
+- NumPy : pour la génération de signaux et la FFT.
+- SciPy : pour les filtres et les fonctions de signal.
+- Plotly : pour les visualisations interactives.
+- Pandas : pour organiser les données et les exporter.
+
+4.11 energy.py
+
+Rôle : calculs d’énergie, rendements et bilans.
+
+Contenu :
+- formules énergétiques et puissances
+- calcul de rendement et de coûts
+- visualisation de conversions énergétiques
+
+Pourquoi ce module ?
+Il permet de lier des concepts énergétiques à des calculs simples mais concrets. Ce module est utile pour des études d’ingénierie, l’analyse de performance et l’évaluation de systèmes.
+
+Bibliothèques utilisées :
+- NumPy : pour les calculs numériques.
+- Plotly : pour les graphiques.
+- Streamlit : pour le paramétrage et la présentation.
+
+4.12 automatique.py
+
+Rôle : systèmes de contrôle, fonctions de transfert et réponse temporelle.
+
+Contenu :
+- modèles de systèmes linéaires
+- réponses indicielle et impulsionnelle
+- critères de stabilité, marges gain/phase
+- théorie PID et Routh-Hurwitz
+
+Pourquoi ce module ?
+Il vise à faire le lien entre la théorie des systèmes et les réponses réelles. Les étudiants en automatique peuvent visualiser la dynamique et comprendre l’impact d’un contrôleur PID ou des conditions de stabilité.
+
+Bibliothèques utilisées :
+- NumPy : pour les calculs de fonctions de transfert.
+- SciPy : pour les réponses temporelles et la simulation de systèmes.
+- Plotly : pour les graphiques de réponse.
+- Streamlit : pour les paramètres et diagnostics.
+
+4.13 analyse_formules_latex.py
+
+Rôle : analyse des formules LaTeX dans les fichiers Python.
+
+Contenu :
+- extraction automatique des formules des dictionnaires FORMULES*
+- validation de la syntaxe LaTeX (accolades, parenthèses)
+- génération de rapports texte et HTML
+- détection d'erreurs et suggestions de correction
+
+Pourquoi ce module ?
+Il permet de maintenir la qualité des formules mathématiques dans le code. Ce module est utile pour les développeurs travaillant sur des applications scientifiques avec des expressions LaTeX.
+
+Bibliothèques utilisées :
+- os, re, pathlib : pour la manipulation de fichiers et expressions régulières.
+- typing : pour les annotations de types.
+
+4.14 data_science.py
+
+Rôle : outils de machine learning et analyse de données.
+
+Contenu :
+- modèles de régression (linéaire, Ridge, Lasso, ElasticNet, Random Forest, Gradient Boosting, SVR)
+- clustering (K-Means, DBSCAN)
+- réduction de dimension (PCA)
+- évaluation des modèles (R², RMSE, silhouette)
+- visualisation des données et résultats
+
+Pourquoi ce module ?
+Il offre une introduction pratique au machine learning. Les utilisateurs peuvent comparer des modèles, visualiser des données et comprendre les métriques d'évaluation.
+
+Bibliothèques utilisées :
+- scikit-learn : pour les algorithmes ML.
+- Pandas : pour la manipulation de données.
+- NumPy : pour les calculs.
+- Plotly : pour les visualisations.
+- SciPy : pour les statistiques.
+
+4.15 genere_rapport_html.py
+
+Rôle : génération de rapports HTML pour les formules LaTeX.
+
+Contenu :
+- extraction des formules des fichiers Python
+- création de pages HTML avec rendu des formules
+- organisation par fichier et section
+- export des rapports
+
+Pourquoi ce module ?
+Il facilite la documentation des formules mathématiques. Ce module génère des rapports lisibles pour partager ou archiver les expressions LaTeX.
+
+Bibliothèques utilisées :
+- os, re, pathlib : pour les fichiers et regex.
+- typing : pour les types.
+
+5. STYLE ET PRÉSENTATION
+
+L’application mise sur une interface sombre et moderne. Le style est géré par main.css, qui centralise l’apparence et renforce la cohérence visuelle.
+
+5.1 Navigation
+
+La navigation est conçue pour être claire :
+- menu latéral permanent
+- pages classées par domaine
+- boutons iconographiques pour chaque module
+- retour rapide vers l’accueil
+
+5.2 Gestion de l’état
+
+Le code utilise st.session_state pour garder la page sélectionnée et l’état utilisateur. Cela permet une expérience plus fluide, avec des paramètres persistants entre les interactions.
+
+5.3 Séparation fond/forme
+
+La forme (UI) est séparée du fond (logique métier) :
+- chaque fichier métier contient la logique mathématique et la page Streamlit
+- main.py gère uniquement l’orchestration
+- c’est une architecture maintenable qui facilite l’ajout de nouvelles fonctionnalités sans polluer le cœur de l’application
+
+5.4 JUSTIFICATION DES BIBLIOTHÈQUES
+
+Chaque bibliothèque a été choisie pour sa force spécifique :
+- Streamlit : rendu web simple, contrôle de l’interface sans besoin de HTML/CSS complexe, mise à jour réactive.
+- NumPy : cœur du calcul numérique, performance avec des tableaux et opérations vectorielles.
+- SciPy : fonctions scientifiques avancées, résolutions d’équations, optimisation, interpolations et transformées.
+- Pandas : gestion des données tabulaires, exportation CSV et organisation des résultats.
+- Plotly : graphiques interactifs dans le navigateur, riches en options de rendu.
+- scikit-learn : algorithmes ML pour le module data science, prétraitement et évaluation.
+
+6. FONCTIONNEMENT DE L’APPLICATION
+
+Au démarrage :
+- Streamlit charge main.py
+- main.py importe les modules métier
+- si un module échoue, la page continue de fonctionner grâce à un fallback
+- la sidebar est construite dynamiquement
+- l’utilisateur choisit un module, la route exécute la fonction correspondante
+
+Chaque page suit un modèle :
+- introduction textuelle
+- configuration utilisateur par sliders, selectboxes et boutons
+- calculs ou simulations en réponse aux actions
+- affichages graphiques avec Plotly
+- sections d’aide, diagnostics ou formules théoriques
+
+7. PUBLIC CIBLE
+
+L’application est adaptée à plusieurs profils :
+- étudiants en licence ou master scientifique
+- enseignants recherchant un outil visuel de démonstration
+- ingénieurs souhaitant prototyper rapidement des modèles mathématiques
+- développeurs qui veulent un exemple de projet Streamlit modulaire
+- passionnés de simulation désirant comprendre des concepts complexes sans écrire tout le code eux-mêmes
+
+8. VALEUR AJOUTÉE
+
+Pourquoi ce projet est pertinent :
+- modulable : chaque domaine scientifique est indépendant
+- pédagogique : formules, diagnostics et visualisations sont déployés ensemble
+- pratique : les résultats peuvent être exportés en CSV
+- visuel : Plotly offre des graphiques interactifs modernes
+- évolutif : le fichier principal peut intégrer de nouveaux modules sans refactor massif
+
+9. PENSÉE ARCHITECTURALE
+
+L’application privilégie :
+- la lisibilité du code
+- la séparation des préoccupations
+- l’expérimentation interactive
+- la robustesse du démarrage
+- un menu clair et professionnel
+
+L’idée principale est d’offrir une application scientifique que l’on peut utiliser comme laboratoire numérique. Elle est pensée pour être compréhensible et utilisable dès la première ouverture, mais aussi extensible par un développeur.
+
+10. CONCLUSION
+
+Ce projet est une base solide pour une suite d’outils scientifiques. Il combine simulation, calcul numérique et théorie dans un format accessible. Avec un travail supplémentaire, il peut se transformer en plateforme de formation complète ou en support de présentation pour des cours interactifs.
+
+Le code est organisé pour rester clair, et la logique métier est suffisamment isolée pour permettre des évolutions rapides.
+
