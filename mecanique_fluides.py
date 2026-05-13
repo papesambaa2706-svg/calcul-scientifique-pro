@@ -228,7 +228,8 @@ def mecanique_fluides_page():
     st.markdown("*Écoulements internes/externes, couche limite, pertes de charge, aérodynamique*")
     st.markdown("---")
 
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    tab_fluide, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        "⚙️ Fluide",
         "🔢 Nombres adimensionnels",
         "🚿 Écoulements internes",
         "🌬️ Couche limite",
@@ -237,15 +238,44 @@ def mecanique_fluides_page():
         "📖 Théorie"
     ])
 
-    with st.sidebar.expander("⚙️ Fluide", expanded=True):
+    # ============================================================
+    # TAB FLUIDE : CONFIGURATION DU FLUIDE
+    # ============================================================
+    with tab_fluide:
+        st.markdown("### ⚙️ Configuration du Fluide")
+        st.markdown("*Sélectionnez le fluide ou définissez des propriétés personnalisées.*")
+
         fluide_sel = st.selectbox("Fluide", list(FLUIDES_PREDEF.keys()))
+
         if fluide_sel == "Personnalisé":
-            rho = st.slider("ρ (kg/m³)", 1.0, 15000.0, 1000.0)
-            mu  = st.slider("μ (Pa·s)", 1e-6, 10.0, 1e-3, format="%.2e")
+            st.markdown("**Propriétés personnalisées**")
+            col1, col2 = st.columns(2)
+            with col1:
+                rho = st.slider("ρ (kg/m³)", 1.0, 15000.0, 1000.0)
+            with col2:
+                mu  = st.slider("μ (Pa·s)", 1e-6, 10.0, 1e-3, format="%.2e")
         else:
             fp = FLUIDES_PREDEF[fluide_sel]
             rho, mu = fp["rho"], fp["mu"]
-            st.info(f"ρ={rho} kg/m³ | μ={mu:.2e} Pa·s | ν={fp['nu']:.2e} m²/s")
+            st.success(f"**Fluide sélectionné : {fluide_sel}**")
+            st.info(f"ρ = {rho} kg/m³ | μ = {mu:.2e} Pa·s | ν = {fp['nu']:.2e} m²/s")
+
+        # Aperçu des propriétés
+        st.markdown("### 🔬 Propriétés du fluide")
+        df_props = pd.DataFrame([{
+            "Propriété": "Masse volumique ρ",
+            "Valeur": f"{rho} kg/m³",
+            "Unité": "kg/m³"
+        }, {
+            "Propriété": "Viscosité dynamique μ",
+            "Valeur": f"{mu:.2e}",
+            "Unité": "Pa·s"
+        }, {
+            "Propriété": "Viscosité cinématique ν",
+            "Valeur": f"{mu/rho:.2e}",
+            "Unité": "m²/s"
+        }])
+        st.table(df_props)
 
     engine = FluidEngine(rho, mu)
 
